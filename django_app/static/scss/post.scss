@@ -16,6 +16,15 @@ article.post {
       padding: 15px;
     }
 
+    .post-btn-container{
+      .btn-left{
+        float: left;
+      }
+      .btn-right{
+        float: right;
+      }
+    }
+
     p.comment {
       margin-bottom: 6px;
     }

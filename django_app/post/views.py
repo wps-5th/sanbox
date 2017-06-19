@@ -132,8 +132,7 @@ def post_create(request):
 def post_modify(request, post_pk):
     post = Post.objects.get(pk=post_pk)
 
-    if request.POST == 'POST':
-        print(1)
+    if request.method == 'POST':
         form = PostForm(data=request.POST, files=request.FILES, instance=post)
         form.save(commit=False)
         return redirect('post:post_detail', post_pk=post.pk)
