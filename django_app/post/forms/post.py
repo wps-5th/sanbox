@@ -2,10 +2,13 @@ from django import forms
 
 from ..models import Post, Comment
 
+
 class PostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.fields['photo'].required = True
+        if self.instance.my_comment:
+            self.fields['comment'].initial = self.instance.my_comment.content
 
     comment = forms.CharField(
         required=False,
@@ -29,7 +32,7 @@ class PostForm(forms.ModelForm):
         #         'author is require field'
         #     )
         # if commit:
-            # instance.author = author
+        # instance.author = author
         comment_string = self.cleaned_data['comment']
         # if commit and comment_string:
 
@@ -41,12 +44,13 @@ class PostForm(forms.ModelForm):
                 instance.my_comment = Comment.objects.get_or_create(
                     post=instance,
                     author=author,
-                    defualt={'content':comment_string}
+                    content=comment_string,
                 )
                 # if not comment_created:
                 #     instance.comment_set.create(
                 #         author=instance.author,
                 #         content=comment_string,
                 #     )
+            instance.save()
 
         return instance

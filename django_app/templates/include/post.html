@@ -1,11 +1,13 @@
+{% load static %}
+
 <article class="post">
   <header>
     <div class="post-header-left">
       <img src="" alt="">
-      <span>{{ post.author }}</span>
+      <span class="header-author">{{ post.author }}</span>
     </div>
     <div class="post-header-right">
-      
+
     </div>
   </header>
   <div class="post-photo-container">
@@ -23,10 +25,10 @@
   </div>
   <div class="post-btn-container">
     <a href="#">
-      <img src="" alt="">
+      <img src="{% static 'images/post_heart.png' %}" alt="">
     </a>
     <a href="#">
-      <img src="" alt="">
+      <img src="{% static 'images/post_comment.png' %}" alt="">
     </a>
   </div>
   <p>좋아요 {{ post.like_count }}개</p>
