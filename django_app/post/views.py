@@ -1,10 +1,11 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.http import HttpResponse, HttpResponseNotFound, HttpResponseRedirect
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
 from django.urls import reverse
 
+from post.decorators import post_owner
 from .forms.post import PostForm
 from .models import Post
 
@@ -108,27 +109,20 @@ def post_create(request):
 
         form = PostForm(data=request.POST, files=request.FILES)
         if form.is_valid():
-            # post = form.save(author=request.user)
-            # post.author = request.user
-            # post.save()
-            # comment_string = form.cleaned_data['comment']
-            # if comment_string:
-            #     post.comment_set.create(
-            #         author=post.author,
-            #         content=comment_string,
-            #     )
+            # ModelForm의 save()메서드를 사용해서 Post객체를 가져옴
             post = form.save(author=request.user)
-
             return redirect('post:post_detail', post_pk=post.pk)
     else:
-        form = PostForm()
-        context = {
-            'form': form,
-        }
         # post/post_create.html을 render해서 리턴
-        return render(request, 'post/post_create.html', context)
+        form = PostForm()
+    context = {
+        'form': form,
+    }
+    return render(request, 'post/post_create.html', context)
 
 
+@post_owner
+@login_required
 def post_modify(request, post_pk):
     post = Post.objects.get(pk=post_pk)
 
@@ -141,11 +135,14 @@ def post_modify(request, post_pk):
     context = {
         'form': form,
     }
-    return render(request, 'post/post_create.html', context)
+    return render(request, 'post/post_modify.html', context)
 
 
 def post_delete(request, post_pk):
-    pass
+    post = get_object_or_404(Post, pk=post_pk)
+    post.delete()
+    return redirect('post:post_list')
+
 
 def comment_create(request, post_pk):
     pass
