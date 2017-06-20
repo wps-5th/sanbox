@@ -5,6 +5,7 @@ from ..models import Post, Comment
 
 User = get_user_model()
 
+
 class PostForm(forms.ModelForm):
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -23,7 +24,6 @@ class PostForm(forms.ModelForm):
             'photo',
             'comment',
         )
-
 
     def save(self, **kwargs):
         # 전달된 키워드인수중 'commit'키 값을 가져옴
