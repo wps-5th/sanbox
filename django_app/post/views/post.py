@@ -6,20 +6,21 @@ from django.template import loader
 from django.urls import reverse
 
 from post.decorators import post_owner
-from post.forms import PostForm
-from post.forms.comment import CommentForm
-from post.models import Post
+from post.forms import CommentForm
+from ..forms import PostForm
+from ..models import Post
+
+# 자동으로 Django에서 인증에 사용하는 User모델클래스를 리턴
+#   https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#django.contrib.auth.get_user_model
+User = get_user_model()
 
 __all__ = (
+    'post_list',
+    'post_detail',
     'post_create',
     'post_modify',
     'post_delete',
-    'post_list',
-    'post_detail',
-    'post_anyway',
 )
-
-User = get_user_model()
 
 
 def post_list(request):
@@ -27,7 +28,7 @@ def post_list(request):
     # post/post_list.html을 template으로 사용하도록 한다
 
     # 각 포스트에 대해 최대 4개까지의 댓글을 보여주도록 템플릿에 설정
-    # 각 post하나당 commentform 을 하나씩 가지도록 리스트 컴프리헨션 사용
+    # 각 post하나당 CommentForm을 하나씩 가지도록 리스트 컴프리헨션 사용
     posts = Post.objects.all()
     context = {
         'posts': posts,
@@ -44,7 +45,7 @@ def post_detail(request, post_pk):
     # 가져오는 과정에서 예외처리를 한다 (Model.DoesNotExist)
     try:
         post = Post.objects.get(pk=post_pk)
-    except Post.DoesNotExist as e:
+    except Post.DoesNotExist:
         # 1. 404 Notfound를 띄워준다
         # return HttpResponseNotFound('Post not found, detail: {}'.format(e))
 
@@ -86,6 +87,7 @@ def post_detail(request, post_pk):
 def post_create(request):
     # POST요청을 받아 Post객체를 생성 후 post_list페이지로 redirect
     if request.method == 'POST':
+        ### PostForm을 쓰지 않은경우
         # # get_user_model을 이용해서 얻은 User클래스(Django에서 인증에 사용하는 유저모델)에서 임의의 유저 한명을 가져온다.
         # user = User.objects.first()
         # # 새 Post객체를 생성하고 DB에 저장
@@ -116,7 +118,6 @@ def post_create(request):
         #     #     author=user,
         #     #     content=comment_string,
         #     # )
-
         form = PostForm(data=request.POST, files=request.FILES)
         if form.is_valid():
             # ModelForm의 save()메서드를 사용해서 Post객체를 가져옴
@@ -134,12 +135,14 @@ def post_create(request):
 @post_owner
 @login_required
 def post_modify(request, post_pk):
+    # 현재 수정하고자하는 Post객체
     post = Post.objects.get(pk=post_pk)
 
     if request.method == 'POST':
         form = PostForm(data=request.POST, files=request.FILES, instance=post)
-        form.save(commit=False)
-        return redirect('post:post_detail', post_pk=post.pk)
+        if form.is_valid():
+            form.save()
+            return redirect('post:post_detail', post_pk=post.pk)
     else:
         form = PostForm(instance=post)
     context = {
@@ -151,10 +154,14 @@ def post_modify(request, post_pk):
 @post_owner
 @login_required
 def post_delete(request, post_pk):
+    # post_pk에 해당하는 Post에 대한 delete요청만을 받음
+    # 처리완료후에는 post_list페이지로 redirect
     post = get_object_or_404(Post, pk=post_pk)
-    post.delete()
-    return redirect('post:post_list')
-
-
-def post_anyway(request):
-    return redirect('post:post_list')
+    if request.method == 'POST':
+        post.delete()
+        return redirect('post:post_list')
+    else:
+        context = {
+            'post': post,
+        }
+        return render(request, 'post/post_delete.html', context)

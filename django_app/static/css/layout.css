@@ -75,6 +75,20 @@ form.form-inline-login input {
   margin-right: 6px;
 }
 
+.message {
+  position: fixed;
+  width: 50%;
+  left: 30%;
+  right: 30%;
+  top: 30%;
+  padding: 20px;
+  border: 1px solid rgba(0, 0, 0, 0.0975);
+  font-size: 18px;
+  border-radius: 3px;
+  background-color: rgba(255, 255, 255, 0.5);
+  text-align: center;
+}
+
 .container {
   max-width: 1010px;
   margin: 0 auto;
