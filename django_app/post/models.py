@@ -8,6 +8,7 @@ import re
 
 from django.conf import settings
 from django.db import models
+from django.urls import reverse
 
 
 class Post(models.Model):
@@ -66,10 +67,9 @@ class Comment(models.Model):
     )
 
     def save(self, *args, **kwargs):
-        if not self.pk:
-            super().save(*args, **kwargs)
-        self.make_html_content_and_add_tags()
         super().save(*args, **kwargs)
+        self.make_html_content_and_add_tags()
+        super().save(update_fields=['html_content'])
 
     def make_html_content_and_add_tags(self):
         p = re.compile(r'(#\w+)')
@@ -79,13 +79,15 @@ class Comment(models.Model):
         for tag_name in tag_name_list:
             # Tag 객체를 가져오거나 생성 생성여부는 쓰지않는 변수이므로 _ 처리
             tag, _ = Tag.objects.get_or_create(name=tag_name.replace('#', ''))
-            change_tag = '<a href="#" class="hash-tag">{}</a>'.format(
-                tag_name
-            )
+            change_tag = '<a href="{url}" class="hash-tag">{tag_name}</a>'.format(
+                url=reverse('post:hashtag_post_list', kwargs={'tag_name': tag_name.replace('#', '')}),
+                tag_name=tag_name
+                            )
             ori_content = re.sub(r'{}(?![<\w])'.format(tag_name), change_tag, ori_content, count=1)
             if not self.tags.filter(pk=tag.pk).exists():
                 self.tags.add(tag)
-        self.html_content = ori_content
+            self.html_content = ori_content
+            super().save(update_fields=['html_content'])
 
 
 class CommentLike(models.Model):

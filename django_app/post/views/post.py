@@ -8,7 +8,7 @@ from django.urls import reverse
 from post.decorators import post_owner
 from post.forms import CommentForm
 from ..forms import PostForm
-from ..models import Post
+from ..models import Post, Tag
 
 # 자동으로 Django에서 인증에 사용하는 User모델클래스를 리턴
 #   https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#django.contrib.auth.get_user_model
@@ -20,6 +20,7 @@ __all__ = (
     'post_create',
     'post_modify',
     'post_delete',
+    'hashtag_post_list',
 )
 
 
@@ -165,3 +166,15 @@ def post_delete(request, post_pk):
             'post': post,
         }
         return render(request, 'post/post_delete.html', context)
+
+
+def hashtag_post_list(request, tag_name):
+    tag = get_object_or_404(Tag, name=tag_name)
+    posts = Post.objects.filter(my_comment__tags=tag)
+    posts_count = posts.count()
+    context = {
+        'tag': tag,
+        'posts': posts,
+        'posts_count': posts_count,
+    }
+    return render(request, 'post/hashtag_post.html', context)
