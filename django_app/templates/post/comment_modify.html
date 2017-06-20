@@ -5,9 +5,9 @@
 <div class="content">
     <h3>Comment modify</h3>
     <form action="" method="POST">
+        {% csrf_token %}
         {% include 'include/field_set.html' %}
         <button type="submit" class="btn-xs">수정</button>
-
     </form>
 </div>
 
