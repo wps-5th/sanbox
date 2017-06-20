@@ -25,15 +25,10 @@ class Post(models.Model):
         related_name='like_posts',
         through='PostLike',
     )
-    tags = models.ManyToManyField('Tag', blank=True)
 
     class Meta:
         ordering = ['-pk',]
 
-    def add_comment(self, user, content):
-        # 자신을 post로 갖고, 전달받은 user를 author로 가지며
-        # content를 content필드내용으로 넣는 Comment객체 생성
-        return self.comment_set.create(author=user, content=content)
 
     def add_tag(self, tag_name):
         # tags에 tag매개변수로 전달된 값(str)을

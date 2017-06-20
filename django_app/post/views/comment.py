@@ -1,10 +1,11 @@
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404, redirect, render
 from django.views.decorators.http import require_POST
 
+from post.decorators import comment_owner
 from ..forms import CommentForm
-from ..models import Post
+from ..models import Post, Comment
 
 __all__ = (
     'comment_create',
@@ -21,11 +22,13 @@ def comment_create(request, post_pk):
     post = get_object_or_404(Post, pk=post_pk)
     form = CommentForm(request.POST)
     next = request.GET.get('next')
+
     if form.is_valid():
         comment = form.save(commit=False)
         comment.author = request.user
         comment.post = post
         form.save()
+
     else:
         result=['<br>'.join(v) for k, v in form.errors.items()]
         messages.error(request, result)
@@ -36,8 +39,20 @@ def comment_create(request, post_pk):
 
 # @require_POST
 # @login_required
-def comment_modify(request, post_pk):
-    pass
+def comment_modify(request, comment_pk):
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    if request.method == 'POST':
+        form = CommentForm(data=request.POST, instance=comment)
+        form.save()
+        if next:
+            return redirect(next)
+        return redirect('post:post_detail', post_pk=comment.post.pk)
+    else:
+        form = CommentForm(instance=comment)
+    context ={
+        'form':form,
+    }
+    return render(request,'post/comment_modify.html', context)
 
 
 #     comment = Comment.objects.get(pk=post_pk)
@@ -55,7 +70,9 @@ def comment_modify(request, post_pk):
 #     # }
 #     # return render(request, 'post/post_modify.html', context)
 
-
+@comment_owner
+@login_required
+@require_POST
 def comment_delete(request, post_pk, comment_pk):
     # # POST요청을 받아 Comment객체를 delete, 이후 post_detail페이지로 redirect
     # post = get_object_or_404(Comment, pk=post_pk)
@@ -67,4 +84,7 @@ def comment_delete(request, post_pk, comment_pk):
     #         'post': post
     #     }
     #     return render(request, 'post/post_delete.html', context)
-    pass
+    comment = get_object_or_404(Comment, pk=comment_pk)
+    post = comment.post
+    comment.delete()
+    return require_POST('post:post_detail', post_pk=post.pk)

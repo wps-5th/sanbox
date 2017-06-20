@@ -53,17 +53,18 @@
 
             <!--post에 연결된 Comment목록을 for문으로 순회하며 아래의 div.post-comment를 반복-->
             {% for comment in post.comment_set.all %}
-            {% if comment != post.my_comment %}
+                {% if comment != post.my_comment %}
             <!--
               include한 post_comment내에서 이미 'comment'라는 이름을 사용중이며
               for문에서 사용하는 각 loop의 아이템 이름 'comment'와 일치
             -->
-            {% include 'include/post_comment.html' %}
-            {% endif %}
+                    {% include 'include/post_comment.html' %}
+                {% endif %}
             {% endfor %}
         </div>
         <p class="created">{{ post.created_date }}</p>
-        <form action="{% url 'post:comment_create' post_pk=post.pk %}?next={{ request.path }}#post-{{ post.pk }}" method="POST">
+        <form action="{% url 'post:comment_create' post_pk=post.pk %}?next={{ request.path }}#post-{{ post.pk }}"
+              method="POST">
             {% csrf_token %}
             {{ comment_form.content }}
             <!--<input type="text" placeholder="댓글달기" class="input-comment">-->
