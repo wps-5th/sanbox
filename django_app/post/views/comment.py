@@ -27,7 +27,8 @@ def comment_create(request, post_pk):
         comment.post = post
         form.save()
     else:
-        messages.error(request, form.errors)
+        result=['<br>'.join(v) for k, v in form.errors.items()]
+        messages.error(request, result)
     if next:
         return redirect(next)
     return redirect('post:post_detail', post_pk=post.pk)
