@@ -27,8 +27,7 @@ class Post(models.Model):
     )
 
     class Meta:
-        ordering = ['-pk',]
-
+        ordering = ['-pk', ]
 
     def add_tag(self, tag_name):
         # tags에 tag매개변수로 전달된 값(str)을
@@ -54,6 +53,7 @@ class Comment(models.Model):
     post = models.ForeignKey(Post)
     author = models.ForeignKey(settings.AUTH_USER_MODEL)
     content = models.TextField()
+    tags = models.ManyToManyField('Tag')
     created_date = models.DateTimeField(auto_now_add=True)
     modified_date = models.DateTimeField(auto_now=True)
     like_users = models.ManyToManyField(
