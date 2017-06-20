@@ -30,7 +30,7 @@ def comment_create(request, post_pk):
         form.save()
 
     else:
-        result=['<br>'.join(v) for k, v in form.errors.items()]
+        result = '<br>'.join(['<br>'.join(v) for v in form.errors.values()])
         messages.error(request, result)
     if next:
         return redirect(next)
@@ -41,6 +41,7 @@ def comment_create(request, post_pk):
 # @login_required
 def comment_modify(request, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
+    next = request.GET.get('next')
     if request.method == 'POST':
         form = CommentForm(data=request.POST, instance=comment)
         form.save()
@@ -88,3 +89,8 @@ def comment_delete(request, post_pk, comment_pk):
     post = comment.post
     comment.delete()
     return require_POST('post:post_detail', post_pk=post.pk)
+
+
+def hashtag_post_list(request, tag_name):
+
+    posts = Post.objects.filter()

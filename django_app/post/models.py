@@ -66,6 +66,8 @@ class Comment(models.Model):
     )
 
     def save(self, *args, **kwargs):
+        if not self.pk:
+            super().save(*args, **kwargs)
         self.make_html_content_and_add_tags()
         super().save(*args, **kwargs)
 
@@ -77,12 +79,10 @@ class Comment(models.Model):
         for tag_name in tag_name_list:
             # Tag 객체를 가져오거나 생성 생성여부는 쓰지않는 변수이므로 _ 처리
             tag, _ = Tag.objects.get_or_create(name=tag_name.replace('#', ''))
-            ori_content = ori_content.replace(
-                tag_name,
-                '<a href="#" class="hash-tag">{}</a>'.format(
-                    tag_name
-                )
+            change_tag = '<a href="#" class="hash-tag">{}</a>'.format(
+                tag_name
             )
+            ori_content = re.sub(r'{}(?![<\w])'.format(tag_name), change_tag, ori_content, count=1)
             if not self.tags.filter(pk=tag.pk).exists():
                 self.tags.add(tag)
         self.html_content = ori_content
