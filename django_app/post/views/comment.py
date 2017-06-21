@@ -50,10 +50,10 @@ def comment_modify(request, comment_pk):
         return redirect('post:post_detail', post_pk=comment.post.pk)
     else:
         form = CommentForm(instance=comment)
-    context ={
-        'form':form,
+    context = {
+        'form': form,
     }
-    return render(request,'post/comment_modify.html', context)
+    return render(request, 'post/comment_modify.html', context)
 
 
 #     comment = Comment.objects.get(pk=post_pk)
@@ -74,7 +74,7 @@ def comment_modify(request, comment_pk):
 @comment_owner
 @login_required
 @require_POST
-def comment_delete(request, post_pk, comment_pk):
+def comment_delete(request, comment_pk):
     # # POST요청을 받아 Comment객체를 delete, 이후 post_detail페이지로 redirect
     # post = get_object_or_404(Comment, pk=post_pk)
     # if request.method == 'POST':
@@ -88,9 +88,8 @@ def comment_delete(request, post_pk, comment_pk):
     comment = get_object_or_404(Comment, pk=comment_pk)
     post = comment.post
     comment.delete()
-    return require_POST('post:post_detail', post_pk=post.pk)
+    return redirect('post:post_detail', post_pk=post.pk)
 
 
 def hashtag_post_list(request, tag_name):
-
     posts = Post.objects.filter()

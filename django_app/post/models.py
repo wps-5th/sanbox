@@ -69,7 +69,7 @@ class Comment(models.Model):
     def save(self, *args, **kwargs):
         super().save(*args, **kwargs)
         self.make_html_content_and_add_tags()
-        super().save(update_fields=['html_content'])
+
 
     def make_html_content_and_add_tags(self):
         p = re.compile(r'(#\w+)')
@@ -86,8 +86,8 @@ class Comment(models.Model):
             ori_content = re.sub(r'{}(?![<\w])'.format(tag_name), change_tag, ori_content, count=1)
             if not self.tags.filter(pk=tag.pk).exists():
                 self.tags.add(tag)
-            self.html_content = ori_content
-            super().save(update_fields=['html_content'])
+        self.html_content = ori_content
+        super().save(update_fields=['html_content'])
 
 
 class CommentLike(models.Model):

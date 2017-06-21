@@ -83,14 +83,14 @@ def post_detail(request, post_pk):
     # request에 대해 response를 돌려줄때는 HttpResponse나 render를 사용가능
     # template을 사용하려면 render함수를 사용한다
     # render함수는
-    #   django.template.loader.get_template함수와
+    #   django.templatetags.loader.get_template함수와
     #   django.http.HttpResponse함수를 축약해 놓은 shortcut이다
     #       https://docs.djangoproject.com/en/1.11/topics/http/shortcuts/#render
 
     # ! 이 뷰에서는 render를 사용하지 않고, 전체 과정(loader, HttpResponse)을 기술
     # Django가 템플릿을 검색할 수 있는 모든 디렉토리를 순회하며
     # 인자로 주어진 문자열값과 일치하는 템플릿이 있는지 확인 후,
-    # 결과를 리턴 (django.template.backends.django.Template클래스형 객체)
+    # 결과를 리턴 (django.templatetags.backends.django.Template클래스형 객체)
     # get_template()메서드
     #   https://docs.djangoproject.com/en/1.11/topics/templates/#django.template.loader.get_template
     template = loader.get_template('post/post_detail.html')
