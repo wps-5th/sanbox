@@ -4,8 +4,29 @@
 <div>
 	<a href="{% url 'post:post_create' %}" class="btn" >create</a>
 </div>
-	{% for post in posts %}
-		{% include 'include/post.html' with type='list' %}
+{% for post in posts %}
+	{% include 'include/post.html' with type='list' %}
+{% endfor %}
+
+<div class="test">{{ request.GET }}</div>
+<div class="test">
+	{% for k,v_list in request.GET.lists %}
+		{% for v in v_list %}
+			<div>{{ k }}:{{ v }}</div>
+		{% endfor %}
 	{% endfor %}
+</div>
+
+
+{% if posts.has_previous %}
+	<a href="{{ request.path }}?page=1">처음</a>
+	<a href="{{ request.path }}?page={{ posts.previous_page_number}}">이전 ({{ posts.previous_page_number }}페이지)</a>
+{% endif %}
+
+{% if posts.has_next %}
+	<a href="{{ request.path }}?page={{ posts.next_page_number}}">다음 ({{ posts.next_page_number }}페이지)</a>
+	<a href="{{ request.path }}?page={{ posts.paginator.num_pages }}">마지막</a>
+{% endif %}
+
 
 {% endblock %}

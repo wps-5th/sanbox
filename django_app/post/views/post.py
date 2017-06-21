@@ -1,5 +1,6 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
+from django.core.paginator import Paginator, PageNotAnInteger, EmptyPage
 from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
@@ -24,17 +25,37 @@ __all__ = (
 )
 
 
-def post_list(request):
-    # 모든 Post목록을 'posts'라는 key로 context에 담아 return render처리
-    # post/post_list.html을 template으로 사용하도록 한다
+# def post_list(request):
+#     # 모든 Post목록을 'posts'라는 key로 context에 담아 return render처리
+#     # post/post_list.html을 template으로 사용하도록 한다
+#
+#     # 각 포스트에 대해 최대 4개까지의 댓글을 보여주도록 템플릿에 설정
+#     # 각 post하나당 CommentForm을 하나씩 가지도록 리스트 컴프리헨션 사용
+#     posts = Post.objects.all()
+#     context = {
+#         'posts': posts,
+#         'comment_form': CommentForm(),
+#     }
+#     return render(request, 'post/post_list.html', context)
 
-    # 각 포스트에 대해 최대 4개까지의 댓글을 보여주도록 템플릿에 설정
-    # 각 post하나당 CommentForm을 하나씩 가지도록 리스트 컴프리헨션 사용
-    posts = Post.objects.all()
+
+def post_list(request):
+    all_posts = Post.objects.all()
+    paginator = Paginator(all_posts, 3)
+
+    page = request.GET.get('page')
+    try:
+        post = paginator.page(page)
+    except PageNotAnInteger:
+        post = paginator.page(1)
+    except EmptyPage:
+        post = paginator.page(paginator.num_pages)
+
     context = {
-        'posts': posts,
+        'posts': post,
         'comment_form': CommentForm(),
     }
+
     return render(request, 'post/post_list.html', context)
 
 
