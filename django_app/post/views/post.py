@@ -5,11 +5,12 @@ from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render, redirect, get_object_or_404
 from django.template import loader
 from django.urls import reverse
+from django.views.decorators.http import require_POST
 
 from post.decorators import post_owner
 from post.forms import CommentForm
 from ..forms import PostForm
-from ..models import Post, Tag
+from ..models import Post, Tag, PostLike
 
 # 자동으로 Django에서 인증에 사용하는 User모델클래스를 리턴
 #   https://docs.djangoproject.com/en/1.11/topics/auth/customizing/#django.contrib.auth.get_user_model
@@ -22,6 +23,7 @@ __all__ = (
     'post_modify',
     'post_delete',
     'hashtag_post_list',
+    'post_like_toggle',
 )
 
 
@@ -187,6 +189,25 @@ def post_delete(request, post_pk):
             'post': post,
         }
         return render(request, 'post/post_delete.html', context)
+
+
+@require_POST
+@login_required
+def post_like_toggle(request, post_pk):
+    post = get_object_or_404(pk=post_pk)
+    # if request.user not in post.like_users:
+    #     post.like_users.add(request.user)
+    post_like, post_like_created = post.postlike_set.get_or_create(
+        user=request.user,
+    )
+    if not post_like_created:
+        post_like.delete()
+    next = request.GET.get('next')
+
+    if next:
+        return redirect(next)
+    return redirect('post:post_detail', post_pk=post.pk)
+
 
 
 def hashtag_post_list(request, tag_name):

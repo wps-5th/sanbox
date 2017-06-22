@@ -44,6 +44,7 @@ def comment_modify(request, comment_pk):
     next = request.GET.get('next')
     if request.method == 'POST':
         form = CommentForm(data=request.POST, instance=comment)
+
         form.save()
         if next:
             return redirect(next)
