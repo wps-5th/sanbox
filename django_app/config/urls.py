@@ -20,7 +20,6 @@ from django.contrib import admin
 from django.views.generic import RedirectView
 
 from . import views
-from post import views as post_views
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
@@ -28,11 +27,15 @@ urlpatterns = [
     # post앱의 index뷰를 root url에 연결시킨다.
     # url(r'^$', post_views.index),
 
+    # 새 view를 만들어 redirect시키는 방법
+    url(r'^$', views.index, name='index'),
+
+    # Class-based View중 RedirectView를 사용하는 방법
+    # url(r'^$', RedirectView.as_view(pattern_name='post:post_list')),
+
     # post앱의 urls.py모듈을 include시킨다
     url(r'^post/', include('post.urls')),
     url(r'^member/', include('member.urls')),
-    url(r'^$/', views.index, name='post_index'),
-    # url(r'^$', RedirectView.as_view(pattern_name='post:post_list')),
 ]
 urlpatterns += static(
     prefix=settings.MEDIA_URL,

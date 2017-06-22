@@ -1,6 +1,6 @@
 from django.core.exceptions import PermissionDenied
 
-from post.models import Post, Comment
+from .models import Post, Comment
 
 
 def post_owner(f):

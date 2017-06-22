@@ -1,0 +1,67 @@
+{% extends 'common/base.html' %}
+
+
+{% block content %}
+<div class="content">
+{#	<h3>{{ cur_user }}</h3>#}
+
+	{% if user != cur_user %}
+		{% if cur_user in user.following %}
+		<button type="submit" class="btn">팔로우 취소</button>
+		{% else %}
+		<button type="submit" class="btn">팔로우</button>
+		{% endif %}
+	{% endif %}
+    <div>
+        {% if count <= 9 %}
+            <h3>{{ count }} 장의 사진을 보여줍니다.</h3>
+            {% for post in cur_user %}
+                <img src="{{ post.photo.url }}" alt="">
+                {{ post.created_date }}
+                {{ post.count }}
+            {% endfor %}
+        {% else %}
+            <h3>{{ count }} 장의 사진을 보여줍니다.</h3>
+            {% for post in cur_user %}
+                <img src="{{ post.photo.url }}" alt="">
+                {{ post.created_date }}
+                {{ post.count }}
+            {% endfor %}
+        {% endif %}
+    </div>
+	<h5>Following</h5>
+	{% for u in cur_user.following %}
+		<div>
+			<!--해당 User의 Profile페이지로 갈 수 있는 링크 생성-->
+			<a href="{% url 'member:profile' user_pk=u.pk %}" class="btn">{{ u }}</a>
+		</div>
+	{% endfor %}
+
+	<h5>Followers</h5>
+	{% for u in cur_user.followers %}
+		<div>
+			<!--해당 User의 Profile페이지로 갈 수 있는 링크 생성-->
+			<a href="{% url 'member:profile' user_pk=u.pk %}" class="btn">{{ u }}</a>
+		</div>
+	{% endfor %}
+
+</div>
+    {% if post.has_previous %}
+	<!--첫 번째 페이지로 가는 링크-->
+	<a href="{{ request.path }}?page=1" class="btn">처음</a>
+	<!--이전 페이지로 가는 링크-->
+	<a href="{{ request.path }}?page={{ post.previous_page_number }}" class="btn">이전 ({{ post.previous_page_number }}페이지)</a>
+	{% endif %}
+
+	<a class="btn">현재 {{ post.number }}페이지</a>
+
+
+	{% if post.has_next %}
+	<!--다음 페이지로 가는 링크-->
+	<a href="{{ request.path }}?page={{ post.next_page_number }}" class="btn">다음 ({{ post.next_page_number }}페이지)</a>
+	<!--마지막 페이지로 가는 링크-->
+	<a href="{{ request.path }}?page={{ post.paginator.num_pages }}" class="btn">끝</a>
+	{% endif %}
+
+
+{% endblock %}
