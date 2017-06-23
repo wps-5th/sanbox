@@ -27,24 +27,24 @@ __all__ = (
 )
 
 
-def post_list_original(request):
-    # 모든 Post목록을 'posts'라는 key로 context에 담아 return render처리
-    # post/post_list.html을 template으로 사용하도록 한다
-
-    # 각 포스트에 대해 최대 4개까지의 댓글을 보여주도록 템플릿에 설정
-    # 각 post하나당 CommentForm을 하나씩 가지도록 리스트 컴프리헨션 사용
-
-    # 숙제
-    # 1. post_list와 hashtag_post_list에서 pagination을 이용해서
-    #    한 번에 10개씩만 표시하도록 수정
-    #   https://docs.djangoproject.com/en/1.11/topics/pagination/
-    # 2. 좋아요 버튼 구현 및 좋아요 한 사람 목록 출력
-    posts = Post.objects.all()
-    context = {
-        'posts': posts,
-        'comment_form': CommentForm(),
-    }
-    return render(request, 'post/post_list.html', context)
+# def post_list_original(request):
+#     # 모든 Post목록을 'posts'라는 key로 context에 담아 return render처리
+#     # post/post_list.html을 template으로 사용하도록 한다
+#
+#     # 각 포스트에 대해 최대 4개까지의 댓글을 보여주도록 템플릿에 설정
+#     # 각 post하나당 CommentForm을 하나씩 가지도록 리스트 컴프리헨션 사용
+#
+#     # 숙제
+#     # 1. post_list와 hashtag_post_list에서 pagination을 이용해서
+#     #    한 번에 10개씩만 표시하도록 수정
+#     #   https://docs.djangoproject.com/en/1.11/topics/pagination/
+#     # 2. 좋아요 버튼 구현 및 좋아요 한 사람 목록 출력
+#     posts = Post.objects.all()
+#     context = {
+#         'posts': posts,
+#         'comment_form': CommentForm(),
+#     }
+#     return render(request, 'post/post_list.html', context)
 
 
 def post_list(request):
@@ -58,20 +58,20 @@ def post_list(request):
 
     # Paginator객체에서 page메서드로 page_num변수를 인수로 전달하여 호출
     try:
-        post = p.page(page_num)
+        posts = p.page(page_num)
 
     # 만약 page_num변수가 int형으로 변환이 불가능하면
     except PageNotAnInteger:
         # 1페이지에 해당하는 Post object list를 posts에 할당
-        post = p.page(1)
+        posts = p.page(1)
     # 만약 page_num에 객체가 없을 경우 (빈 페이지)
     except EmptyPage:
         # 마지막 페이지에 해당하는 Post object list를 posts에 할당
-        post = p.page(p.num_pages)
+        posts = p.page(p.num_pages)
 
     # render에 사용할 dict객체
     context = {
-        'post': post,
+        'posts': posts,
         # 'comment_form': CommentForm(),
         'comment_form': CommentForm(auto_id=False),
     }
