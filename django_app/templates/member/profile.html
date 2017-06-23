@@ -15,7 +15,6 @@
             <form action="{% url 'member:follow_toggle' user_pk=cur_user.pk %}" method="post">
             {% csrf_token %}
             {% if cur_user in user.following %}
-
                 <button type="submit" class="btn">팔로우 취소</button>
 		    {% else %}
 		        <button type="submit" class="btn">팔로우</button>

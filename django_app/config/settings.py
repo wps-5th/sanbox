@@ -103,6 +103,10 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = 'config.urls'
+# Facebook
+FACEBOOK_APP_ID = '261128034369985'
+FACEBOOK_SECRET_CODE='0357d495d89e03dd68d2e7d8bb99e3ed'
+
 
 TEMPLATES = [
     {
@@ -120,6 +124,7 @@ TEMPLATES = [
 
                 # Custom context processors
                 'member.context_processors.forms',
+                'utils.context_processors.facebook_info',
             ],
         },
     },
