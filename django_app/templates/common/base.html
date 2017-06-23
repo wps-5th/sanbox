@@ -18,6 +18,7 @@
 	<link rel="stylesheet" href="{% static 'css/common.css' %}">
 	<link rel="stylesheet" href="{% static 'css/layout.css' %}">
 	<link rel="stylesheet" href="{% static 'css/post.css' %}">
+	<link rel="stylesheet" href="{% static 'css/profile.css' %}">
 	<title>Instagram</title>
 </head>
 <body>
@@ -46,7 +47,7 @@
 					<a href="#">
 						<img src="{% static 'images/icon_heart.png' %}" alt="">
 					</a>
-					<a href="#">
+					<a href="{% url 'member:my_profile' %}">
 						<img src="{% static 'images/icon_profile.png' %}" alt="">
 					</a>
 				</div>
@@ -79,7 +80,7 @@
 				</div>
 			</nav>
 		</header>
-		
+
 		<div class="container">
 			{% block content %}
 			{% endblock %}
