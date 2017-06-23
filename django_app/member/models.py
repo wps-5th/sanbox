@@ -34,6 +34,7 @@ class User(AbstractUser):
         'self',
         through='Relation',
         symmetrical=False,
+        # default_static_image='images/profile.png',
     )
 
     def __str__(self):

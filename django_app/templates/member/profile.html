@@ -6,9 +6,9 @@
 <div class="content porfile">
     <h3>{{ cur_user }}</h3>
 
-    {% if cur_user.img_profile %}
+
     <div><img src="{{ cur_user.img_profile.url }}" alt="" width="200"></div>
-    {% endif %}
+
 
 	{% if user.is_authenticated %}
 	    {% if user != cur_user %}
