@@ -72,7 +72,6 @@ def post_list(request):
     # render에 사용할 dict객체
     context = {
         'posts': posts,
-        # 'comment_form': CommentForm(),
         'comment_form': CommentForm(auto_id=False),
     }
     return render(request, 'post/post_list.html', context)
@@ -117,6 +116,7 @@ def post_detail(request, post_pk):
     context = {
         # context로 전달될 dict의 "키"값이 템플릿에서 사용가능한 변수명이 됨
         'post': post,
+        'comment_form': CommentForm(auto_id=False),
     }
     # template에 인자로 주어진 context, request를 render함수를 사용해서 해당 template을 string으로 변환
     rendered_string = template.render(context=context, request=request)
