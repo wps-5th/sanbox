@@ -193,13 +193,20 @@ def facebook_login(request):
             return result
 
     def get_user_info(user_id, token):
-        url_user_info = 'https://graph.facebook.com/v2.9/{user_id}'.format(user_id=user_id)
+        url_user_info = 'https://graph.facebook.com/v2.9/{}'.format(user_id)
         url_user_info_params = {
             'access_token': token,
+            'fields': ','.join([
+                'id',
+                'name',
+                'picture',
+                'gender',
+            ])
         }
         response = requests.get(url_user_info, params=url_user_info_params)
         result = response.json()
         print(result)
+        return result
 
     if not code:
         return add_message_and_redirect_referer()
