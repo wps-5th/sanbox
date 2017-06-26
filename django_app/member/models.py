@@ -1,8 +1,46 @@
-from django.contrib.auth.models import AbstractUser
-from django.db import models
+import re
 
+from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserManager
+from django.contrib.sites import requests
+from django.core.files import File
+from django.core.files.temp import NamedTemporaryFile
+from django.db import models
+from django.conf import settings
 from utils.fields.custom_imagefield import CustomImageField
 
+
+class UserManager(DefaultUserManager):
+    def get_or_create_facebook_user(self, user_info):
+        username = '{}_{}_{}'.format(User.USER_TYPE_FACEBOOK,
+                                     settings.FACEBOOK_APP_ID,
+                                     user_info['id'],
+                                     )
+        user, user_created = self.get_or_create(
+            username=username,
+            user_type=self.model.USER_TYPE_FACEBOOK,
+            defaults={
+                'last_name': user_info.get('last_name', ''),
+                'first_name': user_info.get('first_name', ''),
+                'email': user_info.get('email', ''),
+            }
+        )
+        if user_created:
+            # 프로필 이미지 url
+            url_picture = user_info['picture']['data']['url']
+
+            p = re.compile(r'.*\.([^?]+)')
+            file_ext = re.search(p, url_picture).group(1)
+            file_name = '{}.{}'.format(
+                user.pk,
+                file_ext,
+            )
+
+            temp_file = NamedTemporaryFile()
+
+            response = requests.get(url_picture)
+            temp_file.write(response.content)
+            user.img_profile.save(file_name, File(temp_file))
+        return user
 
 class User(AbstractUser):
     """
@@ -27,15 +65,24 @@ class User(AbstractUser):
         나와 고성현은 friend관계이다
         나의 friends는 고성현 1명이다
     """
+    USER_TYPE_DJANGO = 'd'
+    USER_TYPE_FACEBOOK = 'f'
+    USER_TYPE_CHOICES = (
+        (USER_TYPE_DJANGO, 'Django'),
+        (USER_TYPE_FACEBOOK, 'Facebook'),
+    )
+    user_type = models.CharField(max_length=1, choices=USER_TYPE_CHOICES, default=USER_TYPE_DJANGO)
     # 이 User모델을 AUTH_USER_MODEL로 사용하도록 settings.py에 설정
     nickname = models.CharField(max_length=24, null=True, unique=True)
-    img_profile = CustomImageField(upload_to='user',blank=True)
+    img_profile = CustomImageField(upload_to='user', blank=True)
     relations = models.ManyToManyField(
         'self',
         through='Relation',
         symmetrical=False,
         # default_static_image='images/profile.png',
     )
+
+    objects = UserManager()
 
     def __str__(self):
         return self.nickname or self.username

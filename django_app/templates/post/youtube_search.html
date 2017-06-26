@@ -1,0 +1,37 @@
+{% extends 'common/base.html' %}
+
+{% block content %}
+
+<div class="content">
+
+    <form action="">
+        <input type="text" name="q" placeholder="YouTube에서 검색할키워드">
+    </form>
+
+
+    {% for item in youtube_play %}
+    <div>
+        <li><img src="{{ item.thumbnail.url }}" alt=""></li>
+        <li>
+            <iframe width="420" height="315" src="https://www.youtube.com/embed/{{ item.video_id }}"></iframe>
+        </li>
+    </div>
+    {% endfor %}
+
+
+
+    <!--<div>-->
+        <!--<ul>-->
+            <!--{% for item in response.items %}-->
+            <!--<li>-->
+                <!--<img src="{{ item.snippet.thumbnails.high.url }}" alt="">-->
+            <!--</li>-->
+            <!--<a href="https://www.youtube.com/watch?v={{ item.videoId }}"></a>-->
+            <!--{% endfor %}-->
+        <!--</ul>-->
+    <!--</div>-->
+
+</div>
+
+
+{% endblock %}

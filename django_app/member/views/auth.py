@@ -188,19 +188,20 @@ def facebook_login(request):
         response = requests.get(url_debug_token, url_debug_token_params)
         result = response.json()
         if 'error' in result['data']:
-            raise DebugTokenException(result['data']['error'])
+            raise DebugTokenException(result)
         else:
             return result
 
     def get_user_info(user_id, token):
-        url_user_info = 'https://graph.facebook.com/v2.9/{}'.format(user_id)
+        url_user_info = 'https://graph.facebook.com/v2.9/{user_id}'.format(user_id=user_id)
         url_user_info_params = {
             'access_token': token,
             'fields': ','.join([
                 'id',
                 'name',
-                'picture',
+                'picture.type(large)',
                 'gender',
+                'email',
             ])
         }
         response = requests.get(url_user_info, params=url_user_info_params)
@@ -214,7 +215,13 @@ def facebook_login(request):
         access_token = get_access_token(code)
         debug_result = debug_token(access_token)
 
-        get_user_info(user_id=debug_result['data']['user_id'], token=access_token)
+        user_info = get_user_info(user_id=debug_result['data']['user_id'], token=access_token)
+        user = User.objects.get_or_create_facebook_user(user_info)
+
+
+        django_login(request, user)
+        return redirect(request.META['HTTP_REFERER'])
+
 
     except GetAccessTokenException as e:
         print(e)

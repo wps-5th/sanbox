@@ -104,3 +104,13 @@ class Tag(models.Model):
 
     def __str__(self):
         return 'Tag({})'.format(self.name)
+
+
+class Video(models.Model):
+    video_id = models.CharField(max_length=50)
+    q = models.CharField(max_length=50, blank=True)
+    video_title = models.CharField(max_length=50)
+    video_thumbnail = models.ImageField(upload_to='thumbnail', blank=True)
+
+    def __str__(self):
+        return self.video_id
