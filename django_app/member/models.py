@@ -1,11 +1,12 @@
 import re
 
+from django.conf import settings
 from django.contrib.auth.models import AbstractUser, UserManager as DefaultUserManager
-from django.contrib.sites import requests
+import requests
 from django.core.files import File
 from django.core.files.temp import NamedTemporaryFile
 from django.db import models
-from django.conf import settings
+
 from utils.fields.custom_imagefield import CustomImageField
 
 
@@ -41,6 +42,7 @@ class UserManager(DefaultUserManager):
             temp_file.write(response.content)
             user.img_profile.save(file_name, File(temp_file))
         return user
+
 
 class User(AbstractUser):
     """

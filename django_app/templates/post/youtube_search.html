@@ -9,27 +9,19 @@
     </form>
 
 
-    {% for item in youtube_play %}
+    {% for item in youtube_keyword %}
     <div>
-        <li><img src="{{ item.thumbnail.url }}" alt=""></li>
-        <li>
-            <iframe width="420" height="315" src="https://www.youtube.com/embed/{{ item.video_id }}"></iframe>
-        </li>
+        <li><img width="200" height="100" src="{{ item.video_thumbnail.url }}" alt=""></li>
+
+        <p>{{ item.title }}</p>
+        <!--<li>-->
+            <!--<iframe width="420" height="315" src="https://www.youtube.com/embed/{{ item.video_id }}"></iframe>-->
+        <!--</li>-->
     </div>
+    <input type="text" type="hidden" name="video_id" value="{{ video.pk }}">
+    <button type="submit" class="btn">포스팅하기</button>
+
     {% endfor %}
-
-
-
-    <!--<div>-->
-        <!--<ul>-->
-            <!--{% for item in response.items %}-->
-            <!--<li>-->
-                <!--<img src="{{ item.snippet.thumbnails.high.url }}" alt="">-->
-            <!--</li>-->
-            <!--<a href="https://www.youtube.com/watch?v={{ item.videoId }}"></a>-->
-            <!--{% endfor %}-->
-        <!--</ul>-->
-    <!--</div>-->
 
 </div>
 
