@@ -2,7 +2,7 @@ from django.db import models
 
 __all__ = (
     'Video',
-    'Video_ori',
+    # 'Video_ori',
     'VideoManager',
 )
 
@@ -32,16 +32,8 @@ class VideoManager(models.Manager):
         ))
         return video
 
+
 class Video(models.Model):
-    video_id = models.CharField(max_length=50)
-    video_title = models.CharField(max_length=50)
-    video_thumbnail = models.ImageField(upload_to='thumbnail', blank=True)
-
-    def __str__(self):
-        return self.video_id
-
-
-class Video_ori(models.Model):
     youtube_id = models.CharField(max_length=50)
     title = models.CharField(max_length=50)
     description = models.TextField(blank=True)
@@ -51,3 +43,16 @@ class Video_ori(models.Model):
 
     def __str__(self):
         return self.title
+
+#
+# class Video(models.Model):
+#     video_id = models.CharField(max_length=50)
+#     video_title = models.CharField(max_length=50)
+#     video_thumbnail = models.ImageField(upload_to='thumbnail', blank=True)
+#
+#     objects = VideoManager()
+#
+#     def __str__(self):
+#         return self.video_id
+#
+#

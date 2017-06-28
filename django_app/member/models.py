@@ -25,7 +25,7 @@ class UserManager(DefaultUserManager):
                 'email': user_info.get('email', ''),
             }
         )
-        if user_created:
+        if user_created and user_info.get('picture'):
             # 프로필 이미지 url
             url_picture = user_info['picture']['data']['url']
 

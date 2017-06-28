@@ -118,21 +118,21 @@ def youtube_search_ori(request):
         return render(request, context=context)
 
 
-# def youtube_search(request, q=None):
-#     context = dict()
-#     q = request.GET.get('q')
-#     if q:
-#         data = youtube.search(q)
-#
-#         for item in data['item']:
-#             Video.objects.create_from_search_result(item)
-#         re_pattern = ''.join(['(?=.*{}'.format(item) for item in q.split()])
-#         videos = Video.objects.filter(
-#             Q(title_regex=re_pattern) |
-#             Q(description__regex=re_pattern)
-#         )
-#         context['videos'] = videos
-#     return render(request, 'post/youtube_search.html', context)
+def youtube_search(request, q=None):
+    context = dict()
+    q = request.GET.get('q')
+    if q:
+        data = youtube.search(q)
+
+        for item in data['items']:
+            Video.objects.created_from_search_result(item)
+        re_pattern = ''.join(['(?=.*{}'.format(item) for item in q.split()])
+        videos = Video.objects.filter(
+            Q(title_iregex=re_pattern) |
+            Q(description__iregex=re_pattern)
+        )
+        context['videos'] = videos
+    return render(request, 'post/youtube_search.html', context)
 
 
 @login_required
