@@ -16,14 +16,14 @@ class VideoManager(models.Manager):
         youtube_id = result['id']['videoId']
         title = result['snippet']['title']
         description = result['snippet']['description']
-        thumbnail = result['snippet']['thumbnails']['high']['url']
+        url_thumbnail = result['snippet']['thumbnails']['high']['url']
 
         video, video_created = Video.objects.get_or_create(
             youtube_id=youtube_id,
             defaults={
                 'title': title,
                 'description': description,
-                'url_thumbnail': thumbnail,
+                'url_thumbnail': url_thumbnail,
             }
         )
         print('Video({})is {}'.format(

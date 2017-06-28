@@ -52,8 +52,8 @@ def youtube_search(request):
             temp_file.write(response.content)
 
             video_list, video_created = Video.objects.get_or_create(
-                video_id=video_id,
-                video_title=video_title,
+                youtube_id=video_id,
+                title=video_title,
                 # video_thumbnail=video_thumbnail,
             )
 
