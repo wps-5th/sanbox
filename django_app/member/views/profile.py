@@ -1,6 +1,7 @@
 from django.contrib.auth import get_user_model
 from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect, get_object_or_404
+from django.urls import reverse
 
 from ..forms import UserEditForm
 
@@ -13,6 +14,10 @@ User = get_user_model()
 
 
 def profile(request, user_pk=None):
+    if not request.user.is_authenticated and not user_pk:
+        login_url = reverse('member:login')
+        redirect_url = login_url + '?next='+request.get_full_path()
+        return redirect(redirect_url)
     num_posts_per_page = 6
     # 0. urls.py와 연결
     #   urls.py참조

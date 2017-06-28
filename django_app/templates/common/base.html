@@ -64,7 +64,7 @@
 					<span>{{ user }}로 로그인 중</span>
 					<a href="{% url 'member:logout' %}" class="btn">로그아웃</a>
 					{% else %}
-					<form action="{% url 'member:login' %}" method="POST" class="form-inline-login">
+					<form action="{% url 'member:login' %}" method="POST" class="form-inline">
 						{% csrf_token %}
 						{{ login_form }}
 						<button type="submit" class="btn">로그인</button>
